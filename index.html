@@ -40,12 +40,13 @@
   #btnBomb{ bottom:18px; border-color:rgba(255,150,200,.85); background:rgba(120,30,80,.5); }
   body.touch #hint{ font-size:11px; bottom:6px; }
 
-  /* 符卡演出（短促：约 0.8s） */
-  #spellOverlay{ position:absolute; inset:0; z-index:6; display:none; visibility:hidden; align-items:center; justify-content:center;
-    opacity:0; transition:opacity .18s; pointer-events:none;
+  /* 符卡演出（短促；子元素默认可见，避免手机 CSS 动画不触发导致空白） */
+  #spellOverlay{ position:absolute; inset:0; z-index:10; display:flex; align-items:center; justify-content:center;
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .2s linear, visibility .2s linear;
     background:radial-gradient(circle at 50% 45%, rgba(255,120,200,.35), rgba(5,3,15,.88) 62%);
     overflow:hidden; }
-  #spellOverlay.show{ display:flex; opacity:1; visibility:visible; }
+  #spellOverlay.show{ opacity:1; visibility:visible; }
   #spellOverlay.fadeout{ opacity:0; }
   #spellOverlay .spellFlash{ position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; }
   #spellOverlay.show .spellFlash{ animation:spellFlash 0.35s ease-out forwards; }
@@ -55,38 +56,39 @@
   #spellOverlay.show .spellRays{ animation:spellRaysSpin 2.4s linear infinite, spellRaysIn .25s ease-out forwards; }
   #spellCard{ position:relative; display:flex; flex-direction:column; align-items:center; gap:8px;
     padding:14px 18px; border-radius:12px;
-    background:linear-gradient(160deg, rgba(40,20,60,.55), rgba(10,5,25,.35));
+    background:linear-gradient(160deg, rgba(40,20,60,.7), rgba(10,5,25,.55));
     box-shadow:0 0 0 2px rgba(255,215,140,.45), 0 0 28px rgba(255,120,200,.4);
-    transform:scale(.9); opacity:0; }
-  #spellOverlay.show #spellCard{ animation:spellCardIn .32s cubic-bezier(.2,1.35,.4,1) .04s forwards; }
+    opacity:1; transform:scale(1); }
+  #spellOverlay.show #spellCard{ animation:spellCardIn .32s cubic-bezier(.2,1.35,.4,1) both; }
   #spellLabel{ font-size:12px; letter-spacing:8px; color:#ffd76a; text-shadow:0 0 10px #ffd76a; opacity:.95; }
   #spellName{ font-size:36px; font-weight:900; letter-spacing:6px; line-height:1.1;
     background:linear-gradient(90deg,#fff,#ffb6e8,#ffe57a,#fff);
     background-size:200% 100%;
     -webkit-background-clip:text; background-clip:text; color:transparent;
     filter:drop-shadow(0 0 8px rgba(255,126,200,.85));
-    opacity:0; }
-  #spellOverlay.show #spellName{ animation:spellNameIn .55s ease-out .08s forwards; }
-  #spellSub{ font-size:11px; letter-spacing:2px; color:#c9b8ff; opacity:0; }
-  #spellOverlay.show #spellSub{ animation:spellSubIn .3s ease-out .2s forwards; }
-  #spellGif{ max-height:42vh; max-width:70vw; border:2px solid rgba(255,230,160,.85); border-radius:8px;
+    opacity:1; }
+  #spellOverlay.show #spellName{ animation:spellNameIn .55s ease-out .05s both; }
+  #spellSub{ font-size:11px; letter-spacing:2px; color:#c9b8ff; opacity:.85; }
+  #spellOverlay.show #spellSub{ animation:spellSubIn .3s ease-out .15s both; }
+  #spellGif{ display:block; max-height:42vh; max-width:70vw; width:auto; height:auto;
+    border:2px solid rgba(255,230,160,.85); border-radius:8px;
     box-shadow:0 0 20px rgba(255,200,120,.7);
-    opacity:0; transform:scale(.35); }
-  #spellOverlay.show #spellGif{ animation:spellGifIn .35s cubic-bezier(.2,1.4,.4,1) .12s forwards; }
+    opacity:1; transform:scale(1); background:#1a1028; }
+  #spellOverlay.show #spellGif{ animation:spellGifIn .3s cubic-bezier(.2,1.4,.4,1) both; }
   @keyframes spellFlash{ 0%{ opacity:.85; } 100%{ opacity:0; } }
   @keyframes spellRaysSpin{ to{ transform:rotate(360deg); } }
   @keyframes spellRaysIn{ from{ opacity:0; } to{ opacity:.85; } }
-  @keyframes spellCardIn{ from{ opacity:0; transform:scale(.7) translateY(16px); } to{ opacity:1; transform:scale(1) translateY(0); } }
-  @keyframes spellNameIn{ 0%{ transform:translateX(-80%) scale(.95); opacity:0; } 40%{ transform:translateX(0) scale(1.05); opacity:1; } 75%{ transform:translateX(0) scale(1); opacity:1; } 100%{ transform:translateX(90%) scale(.96); opacity:0; } }
+  @keyframes spellCardIn{ from{ opacity:.4; transform:scale(.85) translateY(12px); } to{ opacity:1; transform:scale(1) translateY(0); } }
+  @keyframes spellNameIn{ 0%{ transform:translateX(-60%) scale(.95); opacity:0; } 35%{ transform:translateX(0) scale(1.05); opacity:1; } 70%{ transform:translateX(0) scale(1); opacity:1; } 100%{ transform:translateX(70%) scale(.96); opacity:0; } }
   @keyframes spellSubIn{ from{ opacity:0; } to{ opacity:.85; } }
-  @keyframes spellGifIn{ 0%{ transform:scale(.3); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+  @keyframes spellGifIn{ 0%{ transform:scale(.55); opacity:.35; } 100%{ transform:scale(1); opacity:1; } }
 
-  /* 手机：关掉重特效（旋转光晕 / drop-shadow / 大 GIF） */
+  /* 手机：关掉旋转光晕等重特效，图片照常显示 */
   body.touch #spellOverlay .spellRays{ display:none; }
   body.touch #spellName{ filter:none; font-size:28px; letter-spacing:4px; }
-  body.touch #spellGif{ max-height:40vh; max-width:72vw; box-shadow:0 0 12px rgba(255,200,120,.55); }
+  body.touch #spellGif{ max-height:46vh; max-width:82vw; box-shadow:0 0 12px rgba(255,200,120,.55); }
   body.touch #spellCard{ box-shadow:0 0 0 2px rgba(255,215,140,.4); }
-  body.touch #spellOverlay{ background:rgba(5,3,15,.82); }
+  body.touch #spellOverlay{ background:rgba(5,3,15,.88); }
 </style>
 </head>
 <body>
@@ -148,10 +150,37 @@ const W = cv.width, H = cv.height;
 // 符卡演出（动图用 DOM 层显示，GIF 才能播放）
 let spellAnim = null; // {t}
 const spellOverlay = document.getElementById('spellOverlay');
-const spellGif = document.getElementById('spellGif');
+let spellGif = document.getElementById('spellGif');
 const spellName = document.getElementById('spellName');
-const SPELL_GIF_SRC = document.getElementById('spellData').textContent;
-spellGif.src = SPELL_GIF_SRC; // 预加载一次，手机/桌面都显示蛋神图
+const SPELL_GIF_DATA = (document.getElementById('spellData').textContent||'').replace(/\s+/g,'').trim();
+let SPELL_GIF_URL = SPELL_GIF_DATA;
+try{
+  // dataURI → Blob URL：手机端解码/播放更稳
+  const m = SPELL_GIF_DATA.match(/^data:([^;]+);base64,(.+)$/);
+  if(m){
+    const b64 = m[2];
+    const bin = atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
+    SPELL_GIF_URL = URL.createObjectURL(new Blob([arr],{type:m[1]||'image/gif'}));
+  }
+}catch(e){ console.warn('spell gif blob failed', e); }
+spellGif.src = SPELL_GIF_URL;
+spellGif.decoding = 'sync';
+spellGif.loading = 'eager';
+
+function restartSpellGif(){
+  // 强制重播 GIF（同一 src 赋值在部分手机上不会从头播）
+  const parent = spellGif.parentNode;
+  const neu = spellGif.cloneNode(false);
+  neu.id = 'spellGif';
+  neu.alt = '';
+  neu.decoding = 'sync';
+  neu.src = SPELL_GIF_URL;
+  neu.style.cssText = spellGif.style.cssText;
+  parent.replaceChild(neu, spellGif);
+  spellGif = neu;
+}
 // ---------- 工具 ----------
 const rand = (a,b)=> a + Math.random()*(b-a);
 const randi = (a,b)=> Math.floor(rand(a,b+1));
@@ -182,8 +211,8 @@ if('ontouchstart' in window || navigator.maxTouchPoints>0){
   document.body.classList.add('touch');
 }
 const liteFX = document.body.classList.contains('touch'); // 手机减负特效（粒子/阴影），图片照常显示
-const SPELL_FADE = 36;
-const SPELL_END  = 50; // 约 0.8s，保证蛋神图能看清
+const SPELL_FADE = 48;
+const SPELL_END  = 66; // 约 1.1s，保证蛋神图能看清
 let drag=null;
 cv.addEventListener('touchstart', e=>{
   if(state!=='playing') return;
@@ -902,10 +931,10 @@ function useBomb(){
   if(bombs<=0 || state!=='playing' || spellAnim) return;
   bombs--; bombGauge=0; player.inv=Math.max(player.inv,420); shake=liteFX?10:16;
   spellAnim={t:0};
-  spellGif.style.display='';
   spellName.textContent='召唤蛋神';
-  spellOverlay.classList.remove('fadeout');
-  void spellOverlay.offsetWidth;
+  restartSpellGif();
+  spellOverlay.classList.remove('show','fadeout');
+  void spellOverlay.offsetWidth; // 重触发 CSS
   spellOverlay.classList.add('show');
   const n = liteFX ? 14 : 28;
   for(let i=0;i<n;i++){
