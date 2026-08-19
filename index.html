@@ -84,7 +84,7 @@
   /* 手机：关掉重特效（旋转光晕 / drop-shadow / 大 GIF） */
   body.touch #spellOverlay .spellRays{ display:none; }
   body.touch #spellName{ filter:none; font-size:28px; letter-spacing:4px; }
-  body.touch #spellGif{ max-height:28vh; max-width:58vw; box-shadow:0 0 12px rgba(255,200,120,.55); }
+  body.touch #spellGif{ max-height:40vh; max-width:72vw; box-shadow:0 0 12px rgba(255,200,120,.55); }
   body.touch #spellCard{ box-shadow:0 0 0 2px rgba(255,215,140,.4); }
   body.touch #spellOverlay{ background:rgba(5,3,15,.82); }
 </style>
@@ -150,6 +150,8 @@ let spellAnim = null; // {t}
 const spellOverlay = document.getElementById('spellOverlay');
 const spellGif = document.getElementById('spellGif');
 const spellName = document.getElementById('spellName');
+const SPELL_GIF_SRC = document.getElementById('spellData').textContent;
+spellGif.src = SPELL_GIF_SRC; // 预加载一次，手机/桌面都显示蛋神图
 // ---------- 工具 ----------
 const rand = (a,b)=> a + Math.random()*(b-a);
 const randi = (a,b)=> Math.floor(rand(a,b+1));
@@ -179,9 +181,9 @@ addEventListener('keyup', e=>{ if(keyMap[e.key]) keys[keyMap[e.key]]=false; });
 if('ontouchstart' in window || navigator.maxTouchPoints>0){
   document.body.classList.add('touch');
 }
-const liteFX = document.body.classList.contains('touch'); // 手机减负特效
-const SPELL_FADE = liteFX ? 28 : 36;   // 开始淡出
-const SPELL_END  = liteFX ? 40 : 50;   // 清屏结束（约 0.7~0.8s）
+const liteFX = document.body.classList.contains('touch'); // 手机减负特效（粒子/阴影），图片照常显示
+const SPELL_FADE = 36;
+const SPELL_END  = 50; // 约 0.8s，保证蛋神图能看清
 let drag=null;
 cv.addEventListener('touchstart', e=>{
   if(state!=='playing') return;
@@ -900,14 +902,7 @@ function useBomb(){
   if(bombs<=0 || state!=='playing' || spellAnim) return;
   bombs--; bombGauge=0; player.inv=Math.max(player.inv,420); shake=liteFX?10:16;
   spellAnim={t:0};
-  // 手机跳过巨型 GIF（解码最卡），只播名字卡面
-  if(liteFX){
-    spellGif.removeAttribute('src');
-    spellGif.style.display='none';
-  } else {
-    spellGif.style.display='';
-    spellGif.src = document.getElementById('spellData').textContent;
-  }
+  spellGif.style.display='';
   spellName.textContent='召唤蛋神';
   spellOverlay.classList.remove('fadeout');
   void spellOverlay.offsetWidth;
@@ -1027,7 +1022,6 @@ function update(){
       doBombClear();
       spellAnim=null;
       spellOverlay.classList.remove('show','fadeout');
-      spellGif.removeAttribute('src'); // 立刻卸掉 GIF，避免手机继续解码
     }
     return;
   }
@@ -1381,7 +1375,7 @@ function startGame(){
   score=0; graze=0; lives=3; bombs=3; bombGauge=0; time=0;
   spawnTimer=30; waveCount=0; act=0; bossesDefeated=0; bossActive=false; boss=null;
   pBullets=[]; pShots=[]; enemies=[]; particles=[]; items=[]; floaters=[];
-  spellAnim=null; spellOverlay.classList.remove('show','fadeout'); spellGif.removeAttribute('src'); spellGif.style.display=''; spellName.textContent='';
+  spellAnim=null; spellOverlay.classList.remove('show','fadeout'); spellName.textContent='';
   player.x=W/2; player.y=H-110; player.inv=120;
   state='playing';
   document.getElementById('startScreen').classList.add('hidden');
