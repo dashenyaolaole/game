@@ -43,7 +43,7 @@
   /* 符卡演出（短促；子元素默认可见，避免手机 CSS 动画不触发导致空白） */
   #spellOverlay{ position:absolute; inset:0; z-index:10; display:flex; align-items:center; justify-content:center;
     opacity:0; visibility:hidden; pointer-events:none;
-    transition:opacity .2s linear, visibility .2s linear;
+    transition:opacity .35s linear, visibility .35s linear;
     background:radial-gradient(circle at 50% 45%, rgba(255,120,200,.35), rgba(5,3,15,.88) 62%);
     overflow:hidden; }
   #spellOverlay.show{ opacity:1; visibility:visible; }
@@ -67,19 +67,20 @@
     -webkit-background-clip:text; background-clip:text; color:transparent;
     filter:drop-shadow(0 0 8px rgba(255,126,200,.85));
     opacity:1; }
-  #spellOverlay.show #spellName{ animation:spellNameIn .55s ease-out .05s both; }
+  #spellOverlay.show #spellName{ animation:spellNameIn .7s ease-out .08s both; }
   #spellSub{ font-size:11px; letter-spacing:2px; color:#c9b8ff; opacity:.85; }
-  #spellOverlay.show #spellSub{ animation:spellSubIn .3s ease-out .15s both; }
+  #spellOverlay.show #spellSub{ animation:spellSubIn .4s ease-out .25s both; }
   #spellGif{ display:block; max-height:42vh; max-width:70vw; width:auto; height:auto;
     border:2px solid rgba(255,230,160,.85); border-radius:8px;
     box-shadow:0 0 20px rgba(255,200,120,.7);
     opacity:1; transform:scale(1); background:#1a1028; }
-  #spellOverlay.show #spellGif{ animation:spellGifIn .3s cubic-bezier(.2,1.4,.4,1) both; }
+  #spellOverlay.show #spellGif{ animation:spellGifIn .45s cubic-bezier(.2,1.4,.4,1) .1s both; }
   @keyframes spellFlash{ 0%{ opacity:.85; } 100%{ opacity:0; } }
   @keyframes spellRaysSpin{ to{ transform:rotate(360deg); } }
   @keyframes spellRaysIn{ from{ opacity:0; } to{ opacity:.85; } }
   @keyframes spellCardIn{ from{ opacity:.4; transform:scale(.85) translateY(12px); } to{ opacity:1; transform:scale(1) translateY(0); } }
-  @keyframes spellNameIn{ 0%{ transform:translateX(-60%) scale(.95); opacity:0; } 35%{ transform:translateX(0) scale(1.05); opacity:1; } 70%{ transform:translateX(0) scale(1); opacity:1; } 100%{ transform:translateX(70%) scale(.96); opacity:0; } }
+  /* 名字飞入后停住，方便看清；收场靠整层淡出 */
+  @keyframes spellNameIn{ 0%{ transform:translateX(-70%) scale(.95); opacity:0; } 55%{ transform:translateX(0) scale(1.06); opacity:1; } 100%{ transform:translateX(0) scale(1); opacity:1; } }
   @keyframes spellSubIn{ from{ opacity:0; } to{ opacity:.85; } }
   @keyframes spellGifIn{ 0%{ transform:scale(.55); opacity:.35; } 100%{ transform:scale(1); opacity:1; } }
 
@@ -211,8 +212,8 @@ if('ontouchstart' in window || navigator.maxTouchPoints>0){
   document.body.classList.add('touch');
 }
 const liteFX = document.body.classList.contains('touch'); // 手机减负特效（粒子/阴影），图片照常显示
-const SPELL_FADE = 48;
-const SPELL_END  = 66; // 约 1.1s，保证蛋神图能看清
+const SPELL_FADE = 130; // ~2.2s 开始淡出
+const SPELL_END  = 160; // ~2.7s 清屏结束，够看清字和图
 let drag=null;
 cv.addEventListener('touchstart', e=>{
   if(state!=='playing') return;
